@@ -42,3 +42,5 @@ sqitch.conf
   
 #test
 coverage/
+
+test

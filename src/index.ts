@@ -22,5 +22,5 @@ app.use(router);
 
 const PORT = process.env.PORT ?? 3000;
 app.listen(PORT, () => {
-  console.log(` \x1b[1;33m⚡⚡ http://localhost:${PORT} ⚡⚡ \x1b[0m`)
+  logger(` \x1b[1;33m⚡⚡ http://localhost:${PORT} ⚡⚡ \x1b[0m`)
 });
