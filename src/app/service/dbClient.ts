@@ -1,6 +1,11 @@
 // ~ PG CONNEXION DATABASE ~ //
 import pg from 'pg';
 
+// ~ DEBUG CONFIG ~ //
+
+import debug from 'debug';
+const logger = debug('Pool');
+
 const client = new pg.Pool(
   //   {
   //     connectionString: process.env.DATABASE_URL,
@@ -9,7 +14,7 @@ const client = new pg.Pool(
 );
 
 client.connect()
-  .then(() => console.log('DB connection is live.'))
-  .catch((err) => console.log('DB connection failed.', err));
+  .then(() => logger('DB connection is live.'))
+  .catch((err) => logger('DB connection failed.', err));
 
 export { client };
