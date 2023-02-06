@@ -1,14 +1,12 @@
 import { client } from '../service/dbClient.js';
-import { CoreDataMapper } from './coreDatamapper.js';
-// import debug from 'debug';
-// const logger = debug('Datamapper');
+import { CoreDataMapper } from './coreDatamapper';
 class ProductDatamapper extends CoreDataMapper {
     constructor() {
         super(...arguments);
-        this.tableName = 'product';
-        this.columns = `"id", "name", "subtitle", "slug", "description", "price", "image"`;
-        this.createFunctionName = 'create_product';
-        this.updateFunctionName = 'update_product';
+        this.tableName = 'associated_sale';
+        this.columns = `"id", "name", "subtitle", "description", "price", "image"`;
+        this.createFunctionName = 'create_associated_sale';
+        this.updateFunctionName = 'update_associated_sale';
         //& If need to create specific method for LocationDataMapper
     }
 }

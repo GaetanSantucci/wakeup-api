@@ -34,3 +34,16 @@ INSERT INTO public.associated_sale(
 	VALUES ('jus d''orange pressé', '', 'Bouteille de 25cl de jus d''orange frais pressé maison', 'http://localhost:3000/images/orange.jpeg', 3.90),
 	('prosecco riccadonna', '', 'Bouteille de Prosecco Riccadona de 20cl', 'http://localhost:3000/images/prosecco.jpeg', 6.90),
 	('thé noir dammann', '', 'Sachet de the noir breakfast dammann', 'http://localhost:3000/images/the_dammann.jpeg', 0.90)
+
+	INSERT INTO public.plate_has_associated_sale(
+	associated_sale_id, plate_id)
+	VALUES (1, 1),
+	(3, 1),
+	(1, 2),
+	(3, 2),
+	(1, 3),
+	(2, 3),
+	(3, 3),
+	(1, 4),
+	(2, 4),
+	(2, 5)

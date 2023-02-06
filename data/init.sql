@@ -50,10 +50,9 @@ CREATE TABLE IF NOT EXISTS public."associated_sale"(
   "created_at" timestamptz NOT NULL DEFAULT NOW()
 )
 
-CREATE TABLE IF NOT EXISTS public."product_has_associated_sale"(
+CREATE TABLE IF NOT EXISTS public."plate_has_associated_sale"(
   "associated_sale_id" INTEGER REFERENCES public."associated_sale"("id"),
   "plate_id" INTEGER REFERENCES public."plate"("id"),
-  "created_at" timestamptz NOT NULL DEFAULT NOW()
 )
 
 

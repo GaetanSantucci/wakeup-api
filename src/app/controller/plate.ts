@@ -26,13 +26,15 @@ const getPlateById = async (req: Request, res: Response) => {
   try {
 
     const plateId = +req.params.plateId;
-    console.log('plateId: ', plateId);
+    // console.log('plateId: ', plateId);
     const plate = await Plate.findOne(plateId);
-    logger('product: ', plate);
+    const associatedSale = await Plate.findByPlateId(plateId);
+    logger('associatedSale: ', associatedSale);
+    // logger('product: ', plate);
 
     if (!plate) throw new ErrorApi('Article non trouvé', req, res, 400);
 
-    return res.status(200).json(plate)
+    return res.status(200).json({ plate: plate, products: associatedSale })
   } catch (err) {
     if (err instanceof Error) logger(err.message)
   }
