@@ -17,14 +17,14 @@ app.use(express.json());
 import { Request, Response } from 'express';
 //~ Cors
 app.use((req: Request, res: Response, next) => {
-  res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000/');
+  res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
   res.setHeader('Access-Control-Allow-Methods', 'GET,HEAD,OPTIONS,POST,PUT,PATCH,DELETE');
   res.setHeader('Access-Control-Allow-Headers', 'Access-Control-Allow-Headers, Origin,Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers');
   next();
 });
 //If you have your node.js behind a proxy and are using secure: true, you need to set 'trust proxy' in express
-app.set('trust proxy', 1);
+// app.set('trust proxy', 1);
 
 //~ Session
 import session from 'express-session';

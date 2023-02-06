@@ -6,7 +6,7 @@ class BlogDatamapper extends CoreDataMapper {
     constructor() {
         super(...arguments);
         this.tableName = 'blog';
-        this.columns = `"id", "title", "description", "image", "interaction"`;
+        this.columns = `"id", "title", "description", "image", "interaction", "slug"`;
         this.createFunctionName = 'create_blog';
         this.updateFunctionName = 'update_blog';
         //& If need to create specific method for LocationDataMapper

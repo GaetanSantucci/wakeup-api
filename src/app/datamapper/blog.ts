@@ -7,7 +7,7 @@ import { CoreDataMapper } from './coreDatamapper.js';
 class BlogDatamapper extends CoreDataMapper {
 
   tableName = 'blog';
-  columns = `"id", "title", "description", "image", "interaction"`
+  columns = `"id", "title", "description", "image", "interaction", "slug"`
 
   createFunctionName = 'create_blog';
   updateFunctionName = 'update_blog';

@@ -6,7 +6,7 @@ class ProductDatamapper extends CoreDataMapper {
     constructor() {
         super(...arguments);
         this.tableName = 'product';
-        this.columns = `"id", "name", "description", "price", "image"`;
+        this.columns = `"id", "name", "subtitle", "slug", "description", "price", "image"`;
         this.createFunctionName = 'create_product';
         this.updateFunctionName = 'update_product';
         //& If need to create specific method for LocationDataMapper

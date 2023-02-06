@@ -15,6 +15,7 @@ const logger = debug('Controller');
 const getAllProducts = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const productsList = yield Product.findAll();
+        logger('productsList: ', productsList);
         if (!productsList)
             throw new ErrorApi('Impossible d\'obtenir la liste des articles', req, res, 400);
         return res.status(200).json(productsList);
@@ -28,6 +29,7 @@ const getProductById = (req, res) => __awaiter(void 0, void 0, void 0, function*
     try {
         const productId = +req.params.productId;
         const product = yield Product.findOne(productId);
+        logger('product: ', product);
         if (!product)
             throw new ErrorApi('Article non trouvé', req, res, 400);
         return res.status(200).json(product);
