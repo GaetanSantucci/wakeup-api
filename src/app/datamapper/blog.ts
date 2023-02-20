@@ -1,4 +1,4 @@
-import { client } from '../service/dbClient.js';
+import { client } from '../services/dbClient.js';
 import { CoreDataMapper } from './coreDatamapper.js';
 
 // import debug from 'debug';

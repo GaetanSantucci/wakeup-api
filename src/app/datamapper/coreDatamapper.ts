@@ -29,6 +29,7 @@ class CoreDataMapper {
 
   //& Create
   async create(inputData: object) {
+    console.log('this.createFunctionName: ', this.createFunctionName);
     if (this.client instanceof pg.Pool) {
       const preparedQuery = {
         text: `SELECT ${this.createFunctionName}($1);`,

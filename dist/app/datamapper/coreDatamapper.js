@@ -15,6 +15,7 @@ class CoreDataMapper {
     //& Create
     create(inputData) {
         return __awaiter(this, void 0, void 0, function* () {
+            console.log('this.createFunctionName: ', this.createFunctionName);
             if (this.client instanceof pg.Pool) {
                 const preparedQuery = {
                     text: `SELECT ${this.createFunctionName}($1);`,

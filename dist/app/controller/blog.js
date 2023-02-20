@@ -8,7 +8,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 import { Blog } from '../datamapper/blog.js';
-import { ErrorApi } from '../service/errorHandler.js';
+import { ErrorApi } from '../services/errorHandler.js';
 // ~ DEBUG CONFIG ~ //
 import debug from 'debug';
 const logger = debug('Controller');

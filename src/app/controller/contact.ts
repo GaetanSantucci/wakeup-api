@@ -2,8 +2,8 @@ import { Request, Response } from 'express';
 
 // Nodemailer and schema by interactivity
 // import nodemailer from 'nodemailer';
-import { emailReceived, mailSignUp } from '../schema/emailOption.js';
-import { sendEmail } from '../service/nodemailer.js';
+import { emailReceived } from '../schema/emailOption.js';
+import { sendEmail } from '../services/nodemailer.js';
 
 // import { ErrorApi } from '../service/errorHandler.js';
 

@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 
 import { Plate } from '../datamapper/plate.js';
-import { ErrorApi } from '../service/errorHandler.js';
+import { ErrorApi } from '../services/errorHandler.js';
 
 // ~ DEBUG CONFIG ~ //
 import debug from 'debug';

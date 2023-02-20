@@ -19,4 +19,7 @@ router.use(DeliveryRouter);
 import { router as ContactRouter } from './contact.js';
 router.use(ContactRouter);
 
+import { router as UserRouter } from './user.js';
+router.use(UserRouter);
+
 export { router };
