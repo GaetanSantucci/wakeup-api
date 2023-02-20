@@ -16,7 +16,7 @@ class PlateDatamapper extends CoreDataMapper {
     constructor() {
         super(...arguments);
         this.tableName = 'plate';
-        this.columns = `"id", "name", "subtitle", "description", "price", "image", "slug"`;
+        this.columns = `"id", "name", "subtitle", "description", "price", "image", "slug", "is_new"`;
         this.createFunctionName = 'create_plate';
         this.updateFunctionName = 'update_plate';
     }
@@ -24,20 +24,21 @@ class PlateDatamapper extends CoreDataMapper {
     findByPlateId(plateId) {
         return __awaiter(this, void 0, void 0, function* () {
             if (this.client instanceof pg.Pool) {
+                // todo change associated_sale to addon_sale when new DB
                 const preparedQuery = {
-                    text: `SELECT associated_sale.*
-                FROM plate
-                INNER JOIN plate_has_associated_sale ON plate.id = plate_has_associated_sale.plate_id
-                INNER JOIN associated_sale ON plate_has_associated_sale.associated_sale_id = associated_sale.id
-                WHERE plate.id = $1;
+                    text: `SELECT plate.*, json_agg(addon_sales) AS addon_sales
+        FROM plate
+        INNER JOIN plate_has_addon_sales ON plate.id = plate_has_addon_sales.plate_id
+        INNER JOIN addon_sales ON plate_has_addon_sales.addon_sales_id = addon_sales.id
+        WHERE plate.id = $1
+        GROUP BY plate.id
               `,
                     values: [plateId]
                 };
                 const result = yield this.client.query(preparedQuery);
-                console.log('result: ', result.rowCount);
-                if (!result.rowCount)
+                if (!result.rows[0])
                     return null;
-                return result.rows;
+                return result.rows[0];
             }
         });
     }

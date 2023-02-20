@@ -29,13 +29,14 @@ const getPlateById = (req, res) => __awaiter(void 0, void 0, void 0, function* (
     try {
         const plateId = +req.params.plateId;
         // console.log('plateId: ', plateId);
-        const plate = yield Plate.findOne(plateId);
+        // const plate = await Plate.findOne(plateId);
+        //todo utiliser uniquement la deuxieme requete
         const associatedSale = yield Plate.findByPlateId(plateId);
-        logger('associatedSale: ', associatedSale);
+        // logger('associatedSale: ', associatedSale);
         // logger('product: ', plate);
-        if (!plate)
+        if (!associatedSale)
             throw new ErrorApi('Article non trouvé', req, res, 400);
-        return res.status(200).json({ plate: plate, products: associatedSale });
+        return res.status(200).json(associatedSale);
     }
     catch (err) {
         if (err instanceof Error)

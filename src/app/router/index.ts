@@ -16,4 +16,7 @@ router.use(BlogRouter);
 import { router as DeliveryRouter } from './delivery.js';
 router.use(DeliveryRouter);
 
+import { router as ContactRouter } from './contact.js';
+router.use(ContactRouter);
+
 export { router };

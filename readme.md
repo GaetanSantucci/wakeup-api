@@ -19,3 +19,11 @@ Technologies used are :
 - Helmet for API protection
 - Eslint for linter
 - PostgreSQL for DBSM
+
+## Database Wake up
+
+### MCD
+
+## User stories
+
+[ici](./_docs/userStories.md)
