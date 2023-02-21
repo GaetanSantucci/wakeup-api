@@ -1,8 +1,6 @@
 import { Request, Response } from 'express'
 import { ErrorApi } from '../services/errorHandler.js';
 
-// import { Validator } from '../utils/validator.js';
-
 import { User } from '../datamapper/user.js';
 import { generateAccessToken, generateRefreshToken } from '../utils/jwt.js';
 
@@ -12,7 +10,6 @@ import bcrypt from 'bcrypt';
 
 //? ----------------------------------------------------------- GET ALL USERS
 const getAllCustomers = async (req: Request, res: Response) => {
-  console.log('GET ALL USERS requested')
   try {
     const userList = await User.findAll();
     if (!userList) throw new ErrorApi('No users found', req, res, 400);
@@ -26,20 +23,12 @@ const getAllCustomers = async (req: Request, res: Response) => {
 //? ----------------------------------------------------------- CREATE USER
 const signUp = async (req: Request, res: Response) => {
   const { email, password, lastname, firstname } = req.body
-  logger('req.body: ', req.body);
   try {
-    console.log("Je suis dans le controller 1")
     const isExist = await User.findUserIdentity(email)
-    logger('isExist: ', isExist);
-    console.log("Je suis dans le controller 2")
 
     if (isExist) throw new ErrorApi(`User with email ${isExist.email} already exists`, req, res, 401);
 
-    // Validator.checkEmailPattern(email, req, res);
-    // Validator.checkPasswordPattern(password, req, res);
-
     req.body.password = await bcrypt.hash(password, 10);
-    logger('req.body.password: ', req.body.password);
 
     if (!lastname) throw new ErrorApi(`Lastname required`, req, res, 400);
     if (!firstname) throw new ErrorApi(`Firstname required`, req, res, 400);
@@ -65,6 +54,7 @@ const signIn = async (req: Request, res: Response) => {
 
     // verify if password is the same with user.password
     const validPassword = await bcrypt.compare(password, userExist.password);
+    logger('validPassword: ', validPassword);
     if (!validPassword) throw new ErrorApi(`Incorrect password`, req, res, 403);
 
     // delete user.password;
@@ -76,6 +66,7 @@ const signIn = async (req: Request, res: Response) => {
     const refreshToken = generateRefreshToken(user, req);
 
     const userIdentity = { ...user, accessToken, refreshToken }
+    logger('userIdentity: ', userIdentity.address.label);
 
     return res.status(200).json(userIdentity)
 
@@ -87,12 +78,14 @@ const signIn = async (req: Request, res: Response) => {
 //? ----------------------------------------------------------- GET USER PROFILE
 const getCustomerProfile = async (req: Request, res: Response) => {
   try {
-    const userId = +req.params.userId;
-    if (req.user?.id !== userId) throw new ErrorApi(`Unauthorized access`, req, res, 401)
-    if (isNaN(userId)) throw new ErrorApi(`Id must be a number`, req, res, 400);
-    logger(`req.user`, req.user)
-    const user = await User.findOne(userId);
-    return res.status(200).json(user)
+    const userId = req.params.userId;
+    logger('userId: ', userId);
+    // if (req.user?.id !== userId) throw new ErrorApi(`Unauthorized access`, req, res, 401)
+    // if (isNaN(userId)) throw new ErrorApi(`Id must be a number`, req, res, 400);
+    // logger(`req.user`, req.user)
+    // const user = await User.findOne(userId);
+    // return res.status(200).json(user)
+    return res.json("user profile request")
   } catch (err) {
     if (err instanceof Error) logger(err.message)
   }

@@ -63,7 +63,7 @@ CREATE TABLE IF NOT EXISTS public.customer (
   password PASSWORD NOT NULL,
   lastname VARCHAR(100) NOT NULL,
   firstname VARCHAR(100) NOT NULL,
-  address VARCHAR(255) NOT NULL,
+  address JSON NOT NULL,
   phone VARCHAR(20) NOT NULL,
   role VARCHAR(50) NOT NULL,
   newsletter_optin BOOLEAN NOT NULL DEFAULT false,
