@@ -15,7 +15,6 @@ function generateRefreshToken(user: object, req: Request) {
   const refreshToken = jwt.sign(user, process.env.REFRESH_TOKEN_SECRET!, { expiresIn: "2d" });
 
   token.push(refreshToken);
-  console.log(req.user);
   return refreshToken;
 }
 

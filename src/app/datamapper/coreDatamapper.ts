@@ -57,7 +57,7 @@ class CoreDataMapper {
   }
 
   //& FindOne
-  async findOne(id: number | undefined) {
+  async findOne(uuid: string | undefined) {
     if (this.client instanceof pg.Pool) {
       const preparedQuery = {
         text: `
@@ -65,7 +65,7 @@ class CoreDataMapper {
                     FROM "${this.tableName}"
                     WHERE "id" = $1;
                     `,
-        values: [id]
+        values: [uuid]
       };
 
       const result = await this.client.query(preparedQuery);

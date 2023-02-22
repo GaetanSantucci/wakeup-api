@@ -36,7 +36,7 @@ app.use(session({
     secure: true,
     maxAge: 1 * 60 * 60 * 1000, //1 hours
     httpOnly: true,
-    // sameSite: 'none' //'lax', // or 'strict'
+    sameSite: 'none' //'lax', // or 'strict'
     //expires : new Date(Date.now() + 60 * 60 * 1000) //1 hour
   }
 }));

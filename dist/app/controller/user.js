@@ -62,14 +62,12 @@ const signUp = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
 const signIn = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     // on recupere mot de passe + email 
     const { email, password } = req.body;
-    logger('req.body: ', req.body);
     try {
         const userExist = yield User.findUserIdentity(email);
         if (!userExist)
             throw new ErrorApi(`User not found`, req, res, 401);
         // verify if password is the same with user.password
         const validPassword = yield bcrypt.compare(password, userExist.password);
-        logger('validPassword: ', validPassword);
         if (!validPassword)
             throw new ErrorApi(`Incorrect password`, req, res, 403);
         // delete user.password;
@@ -79,7 +77,6 @@ const signIn = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         const accessToken = generateAccessToken(user);
         const refreshToken = generateRefreshToken(user, req);
         const userIdentity = Object.assign(Object.assign({}, user), { accessToken, refreshToken });
-        logger('userIdentity: ', userIdentity.address.label);
         return res.status(200).json(userIdentity);
     }
     catch (err) {
@@ -91,13 +88,11 @@ const signIn = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
 const getCustomerProfile = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const userId = req.params.userId;
-        logger('userId: ', userId);
-        // if (req.user?.id !== userId) throw new ErrorApi(`Unauthorized access`, req, res, 401)
-        // if (isNaN(userId)) throw new ErrorApi(`Id must be a number`, req, res, 400);
-        // logger(`req.user`, req.user)
-        // const user = await User.findOne(userId);
-        // return res.status(200).json(user)
-        return res.json("user profile request");
+        const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+        if (!uuidRegex.test(userId))
+            throw new ErrorApi(`UUID invalid`, req, res, 400);
+        const user = yield User.findOne(userId);
+        return res.status(200).json(user);
     }
     catch (err) {
         if (err instanceof Error)
@@ -108,7 +103,10 @@ const getCustomerProfile = (req, res) => __awaiter(void 0, void 0, void 0, funct
 const signOut = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _b;
     try {
-        const userId = +req.params.userId;
+        const userId = req.params.userId;
+        const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+        if (!uuidRegex.test(userId))
+            throw new ErrorApi(`UUID invalid`, req, res, 400);
         if (((_b = req.user) === null || _b === void 0 ? void 0 : _b.id) !== userId)
             throw new ErrorApi(`Unauthorized access`, req, res, 401);
         return res.status(200).json(`User has been disconnected !`);
@@ -120,32 +118,28 @@ const signOut = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
 });
 //? ----------------------------------------------------------- UPDATE USER
 const updateCustomerProfile = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _c;
     try {
-        const userId = +req.params.userId;
-        if (((_c = req.user) === null || _c === void 0 ? void 0 : _c.id) !== userId)
-            throw new ErrorApi(`Unauthorized access`, req, res, 401);
-        if (isNaN(userId))
-            throw new ErrorApi(`Id must be a number`, req, res, 400);
+        const userId = req.params.userId;
+        // if (req.user?.id !== userId) throw new ErrorApi(`Unauthorized access`, req, res, 401)
+        // if (isNaN(userId)) throw new ErrorApi(`Id must be a number`, req, res, 400);
         // Check if user exist     
         const userExist = yield User.findOne(userId);
         if (!userExist)
             throw new ErrorApi(`User not found`, req, res, 401);
-        const { lat, lon } = req.body.location;
-        const location = yield Location.findLocationByLatAndLon(lat, lon);
-        // Check if location already exist
-        // if exist, insert into table pivot tu userId et the locationId and table user will be automatically updated with trigger
-        if (location) {
-            yield User.updateUserLocation(location.id, userId);
-        }
-        else {
-            // if location not found, create the new location and after insert into table pivot userId and locationId, table user will be automatically updated with trigger
-            const newLocationCreated = yield Location.create(req.body.location);
-            if (newLocationCreated) {
-                const locationId = newLocationCreated.locationId.create_location;
-                yield User.updateUserLocation(locationId, userId);
-            }
-        }
+        // const { lat, lon } = req.body.location;
+        // // const location = await Location.findLocationByLatAndLon(lat, lon);
+        // // Check if location already exist
+        // // if exist, insert into table pivot tu userId et the locationId and table user will be automatically updated with trigger
+        // if (location) {
+        //   await User.updateUserLocation(location.id, userId)
+        // } else {
+        //   // if location not found, create the new location and after insert into table pivot userId and locationId, table user will be automatically updated with trigger
+        //   const newLocationCreated = await Location.create(req.body.location)
+        //   if (newLocationCreated) {
+        //     const locationId = newLocationCreated.locationId.create_location
+        //     await User.updateUserLocation(locationId, userId)
+        //   }
+        // }
         // CHECK IF EMAIL NOT EXIST
         if (req.body.email) {
             const isExist = yield User.findUserIdentity(req.body.email);
@@ -169,18 +163,19 @@ const updateCustomerProfile = (req, res) => __awaiter(void 0, void 0, void 0, fu
 });
 //? ----------------------------------------------------------- DELETE USER
 const deleteCustomer = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _d, _e, _f, _g;
+    var _c, _d, _e, _f;
     try {
-        const userId = +req.params.userId;
-        if (((_d = req.user) === null || _d === void 0 ? void 0 : _d.id) !== userId || ((_e = req.user) === null || _e === void 0 ? void 0 : _e.is_admin) === true)
+        const userId = req.params.userId;
+        const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+        if (!uuidRegex.test(userId))
+            throw new ErrorApi(`UUID invalid`, req, res, 400);
+        if (((_c = req.user) === null || _c === void 0 ? void 0 : _c.id) !== userId || ((_d = req.user) === null || _d === void 0 ? void 0 : _d.role) === 'admin')
             throw new ErrorApi(`Unauthorized access`, req, res, 401);
-        if (isNaN(userId))
-            throw new ErrorApi(`Id must be a number`, req, res, 400);
         const user = yield User.findOne(userId);
         if (!user)
             throw new ErrorApi(`User doesn't exist`, req, res, 400);
-        const isUser = (_f = req.user) === null || _f === void 0 ? void 0 : _f.id;
-        if (isUser === userId || ((_g = req.user) === null || _g === void 0 ? void 0 : _g.is_admin)) {
+        const isUser = (_e = req.user) === null || _e === void 0 ? void 0 : _e.id;
+        if (isUser === userId || ((_f = req.user) === null || _f === void 0 ? void 0 : _f.is_admin)) {
             const userDeleted = yield User.delete(userId);
             if (userDeleted)
                 return res.status(200).json(`User has been deleted !`);

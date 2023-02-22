@@ -43,7 +43,7 @@ class CoreDataMapper {
         });
     }
     //& FindOne
-    findOne(id) {
+    findOne(uuid) {
         return __awaiter(this, void 0, void 0, function* () {
             if (this.client instanceof pg.Pool) {
                 const preparedQuery = {
@@ -52,7 +52,7 @@ class CoreDataMapper {
                     FROM "${this.tableName}"
                     WHERE "id" = $1;
                     `,
-                    values: [id]
+                    values: [uuid]
                 };
                 const result = yield this.client.query(preparedQuery);
                 if (!result.rows[0])

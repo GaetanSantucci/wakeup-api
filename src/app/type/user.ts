@@ -1,5 +1,5 @@
 export type CustomerType = {
-  id: string;
+  id: UUID;
   email: string;
   password: string;
   lastname: string;
@@ -18,3 +18,5 @@ type Address = {
   lat?: number;
   lon?: number;
 }
+
+export type UUID = string & { __uuid: true } 

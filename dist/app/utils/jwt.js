@@ -8,7 +8,6 @@ function generateRefreshToken(user, req) {
     const token = req.session.refreshToken;
     const refreshToken = jwt.sign(user, process.env.REFRESH_TOKEN_SECRET, { expiresIn: "2d" });
     token.push(refreshToken);
-    console.log(req.user);
     return refreshToken;
 }
 function refreshToken(req, res) {

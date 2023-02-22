@@ -7,6 +7,7 @@ import { generateAccessToken, generateRefreshToken } from '../utils/jwt.js';
 import debug from 'debug';
 const logger = debug('Controller');
 import bcrypt from 'bcrypt';
+import { UUID } from '../type/user.js';
 
 //? ----------------------------------------------------------- GET ALL USERS
 const getAllCustomers = async (req: Request, res: Response) => {
@@ -46,7 +47,6 @@ const signUp = async (req: Request, res: Response) => {
 const signIn = async (req: Request, res: Response) => {
   // on recupere mot de passe + email 
   const { email, password } = req.body
-  logger('req.body: ', req.body);
 
   try {
     const userExist = await User.findUserIdentity(email);
@@ -54,7 +54,6 @@ const signIn = async (req: Request, res: Response) => {
 
     // verify if password is the same with user.password
     const validPassword = await bcrypt.compare(password, userExist.password);
-    logger('validPassword: ', validPassword);
     if (!validPassword) throw new ErrorApi(`Incorrect password`, req, res, 403);
 
     // delete user.password;
@@ -66,7 +65,6 @@ const signIn = async (req: Request, res: Response) => {
     const refreshToken = generateRefreshToken(user, req);
 
     const userIdentity = { ...user, accessToken, refreshToken }
-    logger('userIdentity: ', userIdentity.address.label);
 
     return res.status(200).json(userIdentity)
 
@@ -78,14 +76,13 @@ const signIn = async (req: Request, res: Response) => {
 //? ----------------------------------------------------------- GET USER PROFILE
 const getCustomerProfile = async (req: Request, res: Response) => {
   try {
-    const userId = req.params.userId;
-    logger('userId: ', userId);
-    // if (req.user?.id !== userId) throw new ErrorApi(`Unauthorized access`, req, res, 401)
-    // if (isNaN(userId)) throw new ErrorApi(`Id must be a number`, req, res, 400);
-    // logger(`req.user`, req.user)
-    // const user = await User.findOne(userId);
-    // return res.status(200).json(user)
-    return res.json("user profile request")
+    const userId: UUID = req.params.userId as UUID;
+    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+
+    if (!uuidRegex.test(userId)) throw new ErrorApi(`UUID invalid`, req, res, 400);
+
+    const user = await User.findOne(userId);
+    return res.status(200).json(user)
   } catch (err) {
     if (err instanceof Error) logger(err.message)
   }
@@ -94,7 +91,10 @@ const getCustomerProfile = async (req: Request, res: Response) => {
 //? ----------------------------------------------------------- LOGOUT
 const signOut = async (req: Request, res: Response) => {
   try {
-    const userId = +req.params.userId;
+    const userId: UUID = req.params.userId as UUID;
+    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+
+    if (!uuidRegex.test(userId)) throw new ErrorApi(`UUID invalid`, req, res, 400);
     if (req.user?.id !== userId) throw new ErrorApi(`Unauthorized access`, req, res, 401)
     return res.status(200).json(`User has been disconnected !`)
   } catch (err) {
@@ -107,28 +107,28 @@ const signOut = async (req: Request, res: Response) => {
 const updateCustomerProfile = async (req: Request, res: Response) => {
 
   try {
-    const userId = +req.params.userId;
-    if (req.user?.id !== userId) throw new ErrorApi(`Unauthorized access`, req, res, 401)
-    if (isNaN(userId)) throw new ErrorApi(`Id must be a number`, req, res, 400);
+    const userId = req.params.userId;
+    // if (req.user?.id !== userId) throw new ErrorApi(`Unauthorized access`, req, res, 401)
+    // if (isNaN(userId)) throw new ErrorApi(`Id must be a number`, req, res, 400);
 
     // Check if user exist     
     const userExist = await User.findOne(userId);
     if (!userExist) throw new ErrorApi(`User not found`, req, res, 401);
 
-    const { lat, lon } = req.body.location;
-    const location = await Location.findLocationByLatAndLon(lat, lon);
-    // Check if location already exist
-    // if exist, insert into table pivot tu userId et the locationId and table user will be automatically updated with trigger
-    if (location) {
-      await User.updateUserLocation(location.id, userId)
-    } else {
-      // if location not found, create the new location and after insert into table pivot userId and locationId, table user will be automatically updated with trigger
-      const newLocationCreated = await Location.create(req.body.location)
-      if (newLocationCreated) {
-        const locationId = newLocationCreated.locationId.create_location
-        await User.updateUserLocation(locationId, userId)
-      }
-    }
+    // const { lat, lon } = req.body.location;
+    // // const location = await Location.findLocationByLatAndLon(lat, lon);
+    // // Check if location already exist
+    // // if exist, insert into table pivot tu userId et the locationId and table user will be automatically updated with trigger
+    // if (location) {
+    //   await User.updateUserLocation(location.id, userId)
+    // } else {
+    //   // if location not found, create the new location and after insert into table pivot userId and locationId, table user will be automatically updated with trigger
+    //   const newLocationCreated = await Location.create(req.body.location)
+    //   if (newLocationCreated) {
+    //     const locationId = newLocationCreated.locationId.create_location
+    //     await User.updateUserLocation(locationId, userId)
+    //   }
+    // }
 
     // CHECK IF EMAIL NOT EXIST
     if (req.body.email) {
@@ -154,10 +154,12 @@ const updateCustomerProfile = async (req: Request, res: Response) => {
 //? ----------------------------------------------------------- DELETE USER
 const deleteCustomer = async (req: Request, res: Response) => {
   try {
-    const userId = +req.params.userId;
-    if (req.user?.id !== userId || req.user?.is_admin === true) throw new ErrorApi(`Unauthorized access`, req, res, 401)
+    const userId: UUID = req.params.userId as UUID;
+    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
-    if (isNaN(userId)) throw new ErrorApi(`Id must be a number`, req, res, 400);
+    if (!uuidRegex.test(userId)) throw new ErrorApi(`UUID invalid`, req, res, 400);
+    if (req.user?.id !== userId || req.user?.role === 'admin') throw new ErrorApi(`Unauthorized access`, req, res, 401)
+
 
     const user = await User.findOne(userId);
     if (!user) throw new ErrorApi(`User doesn't exist`, req, res, 400);
