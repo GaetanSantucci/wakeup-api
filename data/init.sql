@@ -76,7 +76,6 @@ CREATE TABLE IF NOT EXISTS public.order_details (
   customer_id uuid NOT NULL,
   total NUMERIC(10, 2) NOT NULL,
   booking_date TIMESTAMP NOT NULL DEFAULT NOW(),
-  payment_id INTEGER NOT NULL,
   created_at timestamptz NOT NULL DEFAULT NOW()
 );
 

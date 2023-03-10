@@ -22,4 +22,10 @@ router.use(ContactRouter);
 import { router as UserRouter } from './user.js';
 router.use(UserRouter);
 
+import { router as ReviewRouter } from './review.js';
+router.use(ReviewRouter);
+
+import { router as OrderRouter } from './order.js';
+router.use(OrderRouter);
+
 export { router };
